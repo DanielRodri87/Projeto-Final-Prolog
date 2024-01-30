@@ -27,3 +27,32 @@ diabetes([genetildes, masculino, 56.0, nao, nao, nunca, 37.59, 4.0, 159], nao).
 diabetes([waldisney, masculino, 60.0, nao, nao, passado, 25.4, 4.0, 200], nao).
 diabetes([reinaldo, masculino, 27.0, nao, nao, passado, 27.32, 3.5, 100], nao).
 diabetes([frederico, masculino, 54.0, nao, nao, passado, 30.41, 5.0, 158], nao).
+
+
+adicionar_paciente(Nome, Sexo, Idade, Hipertensao, Colesterol, Historico, Glicemia, Hemoglobina, Creatinina, Resultado) :-
+    open('diabetes.pl', append, Stream),
+    write(Stream, 'diabetes(['),
+    write(Stream, Nome),
+    write(Stream, ', '),
+    write(Stream, Sexo),
+    write(Stream, ', '),
+    write(Stream, Idade),
+    write(Stream, ', '),
+    write(Stream, Hipertensao),
+    write(Stream, ', '),
+    write(Stream, Colesterol),
+    write(Stream, ', '),
+    write(Stream, Historico),
+    write(Stream, ', '),
+    write(Stream, Glicemia),
+    write(Stream, ', '),
+    write(Stream, Hemoglobina),
+    write(Stream, ', '),
+    write(Stream, Creatinina),
+    write(Stream, '], '),
+    write(Stream, Resultado),
+    write(Stream, ').'),
+    nl(Stream),
+    close(Stream).
+
+
