@@ -28,31 +28,39 @@ diabetes([waldisney, masculino, 60.0, nao, nao, passado, 25.4, 4.0, 200], nao).
 diabetes([reinaldo, masculino, 27.0, nao, nao, passado, 27.32, 3.5, 100], nao).
 diabetes([frederico, masculino, 54.0, nao, nao, passado, 30.41, 5.0, 158], nao).
 
-
-adicionar_paciente(Nome, Sexo, Idade, Hipertensao, Colesterol, Historico, Glicemia, Hemoglobina, Creatinina, Resultado) :-
-    open('diabetes.pl', append, Stream),
-    write(Stream, 'diabetes(['),
-    write(Stream, Nome),
-    write(Stream, ', '),
-    write(Stream, Sexo),
-    write(Stream, ', '),
-    write(Stream, Idade),
-    write(Stream, ', '),
-    write(Stream, Hipertensao),
-    write(Stream, ', '),
-    write(Stream, Colesterol),
-    write(Stream, ', '),
-    write(Stream, Historico),
-    write(Stream, ', '),
-    write(Stream, Glicemia),
-    write(Stream, ', '),
-    write(Stream, Hemoglobina),
-    write(Stream, ', '),
-    write(Stream, Creatinina),
-    write(Stream, '], '),
-    write(Stream, Resultado),
-    write(Stream, ').'),
-    nl(Stream),
-    close(Stream).
+adicionar_paciente :-
+    write('Digite o nome do paciente: '), read(Nome),
+    write('Digite o sexo do paciente: '), read(Sexo),
+    write('Digite a idade do paciente: '), read(Idade),
+    write('Digite se o paciente tem historico de diabetes na familia: '), read(Historico),
+    write('Digite se o paciente tem pressao alta: '), read(Pressao),
+    write('Digite se o paciente tem diabetes: '), read(Diabetes),
+    write('Digite o IMC do paciente: '), read(IMC),
+    write('Digite a glicemia do paciente: '), read(Glicemia),
+    write('Digite a insulina do paciente: '), read(Insulina),
+    assertz(diabetes([Nome, Sexo, Idade, Historico, Pressao, Diabetes, IMC, Glicemia, Insulina])),
+    write('Paciente adicionado com sucesso!').
 
 
+listar_todos_pacientes :-
+    diabetes(Paciente, Diabetes),
+    write(Paciente), write(' - '), write(Diabetes), nl,
+    fail.
+
+editar_paciente :-
+    listar_pacientes,
+    write('Digite o nome do paciente que deseja editar: '), read(Nome),
+    diabetes([Nome, Sexo, Idade, Historico, Pressao, Diabetes, IMC, Glicemia, Insulina]),
+    write('O que deseja editar?'), nl,
+    write('1 - Nome'), nl,
+    write('2 - Sexo'), nl,
+    write('3 - Idade'), nl,
+    write('4 - Historico de diabetes na familia'), nl,
+    write('5 - Pressao alta'), nl,
+    write('6 - Diabetes'), nl,
+    write('7 - IMC'), nl,
+    write('8 - Glicemia'), nl,
+    write('9 - Insulina'), nl,
+    write('0 - Sair'), nl,
+    read(Opcao),
+    editar_paciente(Nome, Opcao).
