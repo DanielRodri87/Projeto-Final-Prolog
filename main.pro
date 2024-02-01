@@ -1,3 +1,5 @@
+:- dynamic diabetes/2.
+
 diabetes([maria, feminino, 37.0, nao, nao, passado, 30.5, 5.7, 100], nao).
 diabetes([gorete, feminino, 53.0, nao, nao, passado, 26.37, 4.5, 112], nao).
 diabetes([pedro, masculino, 54.0, nao, nao, nunca, 31.86, 6.6, 145],nao).
@@ -28,46 +30,41 @@ diabetes([waldisney, masculino, 60.0, nao, nao, passado, 25.4, 4.0, 200], nao).
 diabetes([reinaldo, masculino, 27.0, nao, nao, passado, 27.32, 3.5, 100], nao).
 diabetes([frederico, masculino, 54.0, nao, nao, passado, 30.41, 5.0, 158], nao).
 
-% criar adicionar pacientes: informações necessárias:
-% nome, sexo, idade, hipertensão(sim, nao), Cardiaco (sim, nao), Fumante (sim, passado, nunca), IMC,nivel de  Hemoglobina, nivel de Glicose e status: Diabetes (sim, não)
 adicionar_paciente :-
-    write('Digite o nome do paciente: '), read(Nome),
-    write('Digite o sexo do paciente: '), read(Sexo),
-    write('Digite a idade do paciente: '), read(Idade),
-    write('O paciente tem hipertensão? (sim, nao): '), read(Hiper),
-    write('O paciente tem problemas cardíacos? (sim, nao): '), read(Card),
-    write('O paciente é fumante? (sim, passado, nunca): '), read(Fumante),
-    write('Digite o IMC do paciente: '), read(IMC),
-    write('Digite o nivel de Hemoglobina do paciente: '), read(Hemoglobina),
-    write('Digite o nivel de Glicose do paciente: '), read(Glicose),
-    assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose])).
-
-
-
+    write('Digite o nome do paciente: '), nl, read(Nome),
+    write('Digite o sexo do paciente: '), nl, read(Sexo),
+    write('Digite a idade do paciente: '), nl, read(Idade),
+    write('O paciente tem hipertensão? (sim, nao): '), nl, read(Hiper),
+    write('O paciente tem problemas cardíacos? (sim, nao): '), nl, read(Card),
+    write('O paciente é fumante? (sim, passado, nunca): '), nl, read(Fumante),
+    write('Digite o IMC do paciente: '), nl, read(IMC),
+    write('Digite o nivel de Hemoglobina do paciente: '), nl, read(Hemoglobina),
+    write('Digite o nivel de Glicose do paciente: '), nl, read(Glicose),
+    write('Digite o status de diabetes do paciente (sim, nao): '), nl, read(StatusDiabetes),
+    assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)).
 
 listar_todos_pacientes :-
-    diabetes(Paciente),
-    write(Paciente), nl,
+    diabetes(Atributos, StatusDiabetes),
+    write(Atributos), write(' - Status de Diabetes: '), write(StatusDiabetes), nl,
     fail.
+listar_todos_pacientes. 
+
 
 editar_paciente :-
     listar_pacientes,
     write('Digite o nome do paciente que deseja editar: '), read(Nome),
-    diabetes([Nome, Sexo, Idade, Historico, Pressao, Diabetes, IMC, Glicemia, Insulina]),
-    write('O que deseja editar?'), nl,
-    write('1 - Nome'), nl,
-    write('2 - Sexo'), nl,
-    write('3 - Idade'), nl,
-    write('4 - Historico de diabetes na familia'), nl,
-    write('5 - Pressao alta'), nl,
-    write('6 - Diabetes'), nl,
-    write('7 - IMC'), nl,
-    write('8 - Glicemia'), nl,
-    write('9 - Insulina'), nl,
-    write('0 - Sair'), nl,
-    read(Opcao),
-    editar_paciente(Nome, Opcao).
-
+    diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose]),
+    write('Digite o novo nome do paciente: '), read(NovoNome),
+    write('Digite o novo sexo do paciente: '), read(NovoSexo),
+    write('Digite a nova idade do paciente: '), read(NovaIdade),
+    write('O paciente tem hipertensão? (sim, nao): '), read(NovaHiper),
+    write('O paciente tem problemas cardíacos? (sim, nao): '), read(NovoCard),
+    write('O paciente é fumante? (sim, passado, nunca): '), read(NovoFumante),
+    write('Digite o novo IMC do paciente: '), read(NovoIMC),
+    write('Digite o novo nivel de Hemoglobina do paciente: '), read(NovoHemoglobina),
+    write('Digite o novo nivel de Glicose do paciente: '), read(NovoGlicose),
+    retract(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose])),
+    assertz(diabetes([NovoNome, NovoSexo, NovaIdade, NovaHiper, NovoCard, NovoFumante, NovoIMC, NovoHemoglobina, NovoGlicose])).
 
 main :-
     write('1 - Adicionar paciente'), nl,
