@@ -64,3 +64,14 @@ editar_paciente :-
     write('0 - Sair'), nl,
     read(Opcao),
     editar_paciente(Nome, Opcao).
+
+
+main :-
+    write('1 - Adicionar paciente'), nl,
+    write('2 - Listar todos os pacientes'), nl,
+    write('3 - Editar paciente'), nl,
+    write('4 - Remover Paciente'), nl,
+    write('5 - Calcular IMC'), nl,
+    write('7 - Diagnosticar Paciente'), nl,
+    write('8 - Sair'), nl,
+    
