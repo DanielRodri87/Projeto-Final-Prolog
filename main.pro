@@ -22,7 +22,7 @@ diabetes([benicio, masculino, 20.0, nao, nao, passado, 23.04, 5.7, 160], nao).
 diabetes([paulo, masculino, 70.0, nao, nao, passado, 15.94, 5.8, 158], nao).
 diabetes([otavio, masculino, 30.0, nao, nao, passado, 15.8, 6.2, 90], nao).
 diabetes([isis, feminino, 80.0, nao, nao, nunca, 25.04, 9.0, 209], sim).
-diabetes([francinaldo, masculino, 63.0, nao, sim, passado, 27.32, 6.6, 300], sim).
+diabetes([francivaldo, masculino, 63.0, nao, sim, passado, 27.32, 6.6, 300], sim).
 diabetes([juvelino, masculino, 58.0, nao, nao, passado, 32.38, 6.6, 159], sim).
 diabetes([maya, feminino, 43.0, sim, nao, nunca, 34.21, 9.0, 160], sim).
 diabetes([genetildes, masculino, 56.0, nao, nao, nunca, 37.59, 4.0, 159], nao).
