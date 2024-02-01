@@ -28,23 +28,26 @@ diabetes([waldisney, masculino, 60.0, nao, nao, passado, 25.4, 4.0, 200], nao).
 diabetes([reinaldo, masculino, 27.0, nao, nao, passado, 27.32, 3.5, 100], nao).
 diabetes([frederico, masculino, 54.0, nao, nao, passado, 30.41, 5.0, 158], nao).
 
+% criar adicionar pacientes: informações necessárias:
+% nome, sexo, idade, hipertensão(sim, nao), Cardiaco (sim, nao), Fumante (sim, passado, nunca), IMC,nivel de  Hemoglobina, nivel de Glicose e status: Diabetes (sim, não)
 adicionar_paciente :-
     write('Digite o nome do paciente: '), read(Nome),
     write('Digite o sexo do paciente: '), read(Sexo),
     write('Digite a idade do paciente: '), read(Idade),
-    write('Digite se o paciente tem historico de diabetes na familia: '), read(Historico),
-    write('Digite se o paciente tem pressao alta: '), read(Pressao),
-    write('Digite se o paciente tem diabetes: '), read(Diabetes),
+    write('O paciente tem hipertensão? (sim, nao): '), read(Hiper),
+    write('O paciente tem problemas cardíacos? (sim, nao): '), read(Card),
+    write('O paciente é fumante? (sim, passado, nunca): '), read(Fumante),
     write('Digite o IMC do paciente: '), read(IMC),
-    write('Digite a glicemia do paciente: '), read(Glicemia),
-    write('Digite a insulina do paciente: '), read(Insulina),
-    assertz(diabetes([Nome, Sexo, Idade, Historico, Pressao, Diabetes, IMC, Glicemia, Insulina])),
-    write('Paciente adicionado com sucesso!').
+    write('Digite o nivel de Hemoglobina do paciente: '), read(Hemoglobina),
+    write('Digite o nivel de Glicose do paciente: '), read(Glicose),
+    assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose])).
+
+
 
 
 listar_todos_pacientes :-
-    diabetes(Paciente, Diabetes),
-    write(Paciente), write(' - '), write(Diabetes), nl,
+    diabetes(Paciente),
+    write(Paciente), nl,
     fail.
 
 editar_paciente :-
@@ -64,3 +67,26 @@ editar_paciente :-
     write('0 - Sair'), nl,
     read(Opcao),
     editar_paciente(Nome, Opcao).
+
+
+main :-
+    write('1 - Adicionar paciente'), nl,
+    write('2 - Listar todos os pacientes'), nl,
+    write('3 - Editar paciente'), nl,
+    write('4 - Remover Paciente'), nl,
+    write('5 - Calcular IMC'), nl,
+    write('7 - Diagnosticar Paciente'), nl,
+    write('8 - Sair'), nl,
+    
+    read(Opcao),
+    Opcao = 1, adicionar_paciente, main;
+    Opcao = 2, listar_todos_pacientes, main;
+    Opcao = 3, editar_paciente, main;
+    Opcao = 4, remover_paciente, main;
+    Opcao = 5, calcular_imc, main;
+    Opcao = 6, diagnosticar_paciente, main;
+    Opcao = 7, sair.
+
+sair :- halt.
+
+:- initialization(main).
