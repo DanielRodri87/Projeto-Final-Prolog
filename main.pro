@@ -34,17 +34,20 @@ adicionar_paciente :-
     write('Digite o nome do paciente: '), read(Nome),
     write('Digite o sexo do paciente: '), read(Sexo),
     write('Digite a idade do paciente: '), read(Idade),
-    write('O paciente tem historico de diabetes na familia? (sim, nao): '), read(Historico),
-    write('O paciente tem pressao alta? (sim, nao): '), read(Pressao),
-    write('O paciente tem diabetes? (sim, nao): '), read(Diabetes),
+    write('O paciente tem hipertensão? (sim, nao): '), read(Hiper),
+    write('O paciente tem problemas cardíacos? (sim, nao): '), read(Card),
+    write('O paciente é fumante? (sim, passado, nunca): '), read(Fumante),
     write('Digite o IMC do paciente: '), read(IMC),
-    write('Digite o nivel de glicemia do paciente: '), read(Glicemia),
-    write('Digite o nivel de insulina do paciente: '), read(Insulina),
-    assertz(diabetes([Nome, Sexo, Idade, Historico, Pressao, Diabetes, IMC, Glicemia, Insulina])).
+    write('Digite o nivel de Hemoglobina do paciente: '), read(Hemoglobina),
+    write('Digite o nivel de Glicose do paciente: '), read(Glicose),
+    assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose])).
+
+
+
 
 listar_todos_pacientes :-
-    diabetes(Paciente, Diabetes),
-    write(Paciente), write(' - '), write(Diabetes), nl,
+    diabetes(Paciente),
+    write(Paciente), nl,
     fail.
 
 editar_paciente :-
@@ -75,3 +78,15 @@ main :-
     write('7 - Diagnosticar Paciente'), nl,
     write('8 - Sair'), nl,
     
+    read(Opcao),
+    Opcao = 1, adicionar_paciente, main;
+    Opcao = 2, listar_todos_pacientes, main;
+    Opcao = 3, editar_paciente, main;
+    Opcao = 4, remover_paciente, main;
+    Opcao = 5, calcular_imc, main;
+    Opcao = 6, diagnosticar_paciente, main;
+    Opcao = 7, sair.
+
+sair :- halt.
+
+:- initialization(main).
