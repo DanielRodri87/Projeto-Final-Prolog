@@ -28,19 +28,19 @@ diabetes([waldisney, masculino, 60.0, nao, nao, passado, 25.4, 4.0, 200], nao).
 diabetes([reinaldo, masculino, 27.0, nao, nao, passado, 27.32, 3.5, 100], nao).
 diabetes([frederico, masculino, 54.0, nao, nao, passado, 30.41, 5.0, 158], nao).
 
+% criar adicionar pacientes: informações necessárias:
+% nome, sexo, idade, hipertensão(sim, nao), Cardiaco (sim, nao), Fumante (sim, passado, nunca), IMC,nivel de  Hemoglobina, nivel de Glicose e status: Diabetes (sim, não)
 adicionar_paciente :-
     write('Digite o nome do paciente: '), read(Nome),
     write('Digite o sexo do paciente: '), read(Sexo),
     write('Digite a idade do paciente: '), read(Idade),
-    write('Digite se o paciente tem historico de diabetes na familia: '), read(Historico),
-    write('Digite se o paciente tem pressao alta: '), read(Pressao),
-    write('Digite se o paciente tem diabetes: '), read(Diabetes),
+    write('O paciente tem historico de diabetes na familia? (sim, nao): '), read(Historico),
+    write('O paciente tem pressao alta? (sim, nao): '), read(Pressao),
+    write('O paciente tem diabetes? (sim, nao): '), read(Diabetes),
     write('Digite o IMC do paciente: '), read(IMC),
-    write('Digite a glicemia do paciente: '), read(Glicemia),
-    write('Digite a insulina do paciente: '), read(Insulina),
-    assertz(diabetes([Nome, Sexo, Idade, Historico, Pressao, Diabetes, IMC, Glicemia, Insulina])),
-    write('Paciente adicionado com sucesso!').
-
+    write('Digite o nivel de glicemia do paciente: '), read(Glicemia),
+    write('Digite o nivel de insulina do paciente: '), read(Insulina),
+    assertz(diabetes([Nome, Sexo, Idade, Historico, Pressao, Diabetes, IMC, Glicemia, Insulina])).
 
 listar_todos_pacientes :-
     diabetes(Paciente, Diabetes),
