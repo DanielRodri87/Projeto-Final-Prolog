@@ -50,21 +50,60 @@ listar_todos_pacientes :-
 listar_todos_pacientes. 
 
 
+editar_IMC(NomePaciente, Atributo, NovoValor) :-
+    write('Digite o novo valor para '), write(Atributo), write(': '), nl, read(NovoValor),
+    retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)),
+    assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante | [NovoValor, Hemoglobina, Glicose]], StatusDiabetes)).
+
+remover_paciente :-
+    write('Digite o nome do paciente que deseja remover: '), nl, read(NomePaciente),
+    retract(diabetes([NomePaciente, _, _, _, _, _, _, _, _], _)),
+    write('Paciente removido com sucesso.').
+
 editar_paciente :-
-    listar_pacientes,
-    write('Digite o nome do paciente que deseja editar: '), read(Nome),
-    diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose]),
-    write('Digite o novo nome do paciente: '), read(NovoNome),
-    write('Digite o novo sexo do paciente: '), read(NovoSexo),
-    write('Digite a nova idade do paciente: '), read(NovaIdade),
-    write('O paciente tem hipertensão? (sim, nao): '), read(NovaHiper),
-    write('O paciente tem problemas cardíacos? (sim, nao): '), read(NovoCard),
-    write('O paciente é fumante? (sim, passado, nunca): '), read(NovoFumante),
-    write('Digite o novo IMC do paciente: '), read(NovoIMC),
-    write('Digite o novo nivel de Hemoglobina do paciente: '), read(NovoHemoglobina),
-    write('Digite o novo nivel de Glicose do paciente: '), read(NovoGlicose),
-    retract(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose])),
-    assertz(diabetes([NovoNome, NovoSexo, NovaIdade, NovaHiper, NovoCard, NovoFumante, NovoIMC, NovoHemoglobina, NovoGlicose])).
+    write('Escolha um paciente para editar (digite o nome): '), nl,
+    read(NomePaciente),
+    (
+        diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes),
+        write('Paciente encontrado. Atributos atuais: '), nl,
+        write('Nome: '), write(NomePaciente), nl,
+        write('Sexo: '), write(Sexo), nl,
+        write('Idade: '), write(Idade), nl,
+        write('Hipertensão: '), write(Hiper), nl,
+        write('Problemas Cardíacos: '), write(Card), nl,
+        write('Fumante: '), write(Fumante), nl,
+        write('IMC: '), write(IMC), nl,
+        write('Hemoglobina: '), write(Hemoglobina), nl,
+        write('Glicose: '), write(Glicose), nl,
+        write('Status de Diabetes: '), write(StatusDiabetes), nl,
+        write('Escolha o que deseja editar:'), nl,
+        write('1 - Nome'), nl,
+        write('2 - Sexo'), nl,
+        write('3 - Idade'), nl,
+        write('4 - Hipertensão'), nl,
+        write('5 - Problemas Cardíacos'), nl,
+        write('6 - Fumante'), nl,
+        write('7 - IMC'), nl,
+        write('8 - Hemoglobina'), nl,
+        write('9 - Glicose'), nl,
+        write('10 - Status de Diabetes'), nl,
+        read(OpcaoEditar),
+        (
+            OpcaoEditar = 1 -> editar_atributo(NomePaciente, 'Nome', _);
+            OpcaoEditar = 2 -> editar_atributo(NomePaciente, 'Sexo', _);
+            OpcaoEditar = 3 -> editar_atributo(NomePaciente, 'Idade', _);
+            OpcaoEditar = 4 -> editar_atributo(NomePaciente, 'Hipertensão', _);
+            OpcaoEditar = 5 -> editar_atributo(NomePaciente, 'Problemas Cardíacos', _);
+            OpcaoEditar = 6 -> editar_atributo(NomePaciente, 'Fumante', _);
+            OpcaoEditar = 7 -> editar_atributo(NomePaciente, 'IMC', _);
+            OpcaoEditar = 8 -> editar_atributo(NomePaciente, 'Hemoglobina', _);
+            OpcaoEditar = 9 -> editar_atributo(NomePaciente, 'Glicose', _);
+            OpcaoEditar = 10 -> editar_atributo(NomePaciente, 'Status de Diabetes', _)
+        ),
+        main
+    ;
+        write('Paciente não encontrado.')
+    ).
 
 main :-
     write('1 - Adicionar paciente'), nl,
@@ -76,13 +115,15 @@ main :-
     write('8 - Sair'), nl,
     
     read(Opcao),
-    Opcao = 1, adicionar_paciente, main;
-    Opcao = 2, listar_todos_pacientes, main;
-    Opcao = 3, editar_paciente, main;
-    Opcao = 4, remover_paciente, main;
-    Opcao = 5, calcular_imc, main;
-    Opcao = 6, diagnosticar_paciente, main;
-    Opcao = 7, sair.
+    (
+        Opcao = 1 -> adicionar_paciente, main;
+        Opcao = 2 -> listar_todos_pacientes, main;
+        Opcao = 3 -> editar_paciente, main;
+        Opcao = 4 -> remover_paciente, main;
+        Opcao = 5 -> calcular_imc, main;
+        Opcao = 6 -> diagnosticar_paciente, main;
+        Opcao = 7 -> sair
+    ).
 
 sair :- halt.
 
