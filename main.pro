@@ -21,7 +21,6 @@ diabetes([heloise, masculino, 56.0, nao, nao, nunca, 26.78, 4.8, 200], nao).
 diabetes([benicio, masculino, 20.0, nao, nao, passado, 23.04, 5.7, 160], nao).
 diabetes([paulo, masculino, 70.0, nao, nao, passado, 15.94, 5.8, 158], nao).
 diabetes([otavio, masculino, 30.0, nao, nao, passado, 15.8, 6.2, 90], nao).
-diabetes([isis, feminino, 80.0, nao, nao, nunca, 25.04, 9.0, 209], sim).
 diabetes([francivaldo, masculino, 63.0, nao, sim, passado, 27.32, 6.6, 300], sim).
 diabetes([juvelino, masculino, 58.0, nao, nao, passado, 32.38, 6.6, 159], sim).
 diabetes([maya, feminino, 43.0, sim, nao, nunca, 34.21, 9.0, 160], sim).
@@ -30,27 +29,36 @@ diabetes([waldisney, masculino, 60.0, nao, nao, passado, 25.4, 4.0, 200], nao).
 diabetes([reinaldo, masculino, 27.0, nao, nao, passado, 27.32, 3.5, 100], nao).
 diabetes([frederico, masculino, 54.0, nao, nao, passado, 30.41, 5.0, 158], nao).
 
+
+
+media_hemoglobina_status_sim_diabetes(MediaH) :-
+    findall(Hemoglobina, diabetes([_, _, _, _, _, _, _, Hemoglobina, _], sim), ListaHemoglobina),
+    length(ListaHemoglobina, Tamanho),
+    (Tamanho > 0 -> sumlist(ListaHemoglobina, Soma), MediaH is Soma / Tamanho; MediaH is 0).
+
+media_glicose_status_sim_diabetes(MediaG) :-
+    findall(Glicose, diabetes([_, _, _, _, _, _, _, _, Glicose], sim), ListaGlicose),
+    length(ListaGlicose, Tamanho),
+    (Tamanho > 0 -> sumlist(ListaGlicose, Soma), MediaG is Soma / Tamanho; MediaG is 0).
+
 diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes) :-
-    Counter is 0,
-    (Hiper == sim -> Counter1 is Counter + 2; Counter1 is Counter),
+    (Hiper == sim -> Counter1 is 2; Counter1 is 0),
     (Card == sim -> Counter2 is Counter1 + 1; Counter2 is Counter1),
-    (Fumante == sim -> Counter3 is Counter2 + 2; (Fumante == nunca -> Counter3 is Counter2 + 1; Counter3 is Counter2)),
-    (Hemoglobina >= 6.1 -> Counter4 is Counter3 + 3; Counter4 is Counter3),
-    (Glicose > 100 -> Counter5 is Counter4 + 3; Counter5 is Counter4),
-    (Glicose > 126 -> Counter6 is Counter5 + 5; Counter6 is Counter5),
-    (Counter6 >= 11 -> StatusDiabetes = sim; StatusDiabetes = nao).
+    (Fumante == sim -> Counter3 is Counter2 + 2; (Fumante == passado -> Counter3 is Counter2 + 1; Counter3 is Counter2)),
+    
+    media_glicose_status_sim_diabetes(MediaGlicoseSim),
+    media_hemoglobina_status_sim_diabetes(MediaHemoglobinaSim),
+    (Glicose > MediaGlicoseSim -> Counter4 is Counter3 + 2; Counter4 is Counter3),
+    (Hemoglobina > MediaHemoglobinaSim -> Counter5 is Counter4 + 2; Counter5 is Counter4),
+    (Counter5 >= 11 -> StatusDiabetes = sim; StatusDiabetes = nao).
 
-
-calcular_imc :-
-    write('Digite o peso do paciente (em kg): '), nl,
-    read(Peso),
-    write('Digite a altura do paciente (em metros): '), nl,
-    read(Altura),
-    IMC is Peso / (Altura * Altura),
-    write('O IMC do paciente é: '), write(IMC), nl.
-
-imc(Peso, Altura, IMC) :-
-    IMC is Peso / (Altura * Altura).
+% calcular_imc(Altura, Peso, IMC) :-
+%     write('Digite a altura do paciente: (em metros) '), nl,
+%     read(Altura),
+%     write('Digite o peso do paciente: (em kg) '), nl,
+%     read(Peso),
+%     IMC is Peso / (Altura * Altura),
+%     write('IMC: '), write(IMC), nl.
 
 adicionar_paciente :-
     write('Digite o nome do paciente: '), nl,
@@ -65,7 +73,10 @@ adicionar_paciente :-
     read(Card),
     write('O paciente é fumante? (sim, passado, nunca): '), nl,
     read(Fumante),
-    calcular_imc, 
+    % calcular_imc(Altura, Peso, IMC),
+    write('Digite o IMC do paciente: '), nl,
+    read(IMC),
+
     write('Digite o nivel de Hemoglobina do paciente: '), nl,
     read(Hemoglobina),
     write('Digite o nivel de Glicose do paciente: '), nl,
