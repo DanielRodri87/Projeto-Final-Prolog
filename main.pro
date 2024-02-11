@@ -84,27 +84,48 @@ calcular_imc(Altura, Peso, IMC) :-
     write('IMC: '), write(IMC), nl.
 
 adicionar_paciente :-
-    write('Digite o nome do paciente: '), nl,
+    write('Perguntas opcionais: use _ para não responder.'), nl,
+    write('Digite o nome do paciente: (*) '), nl,
     read(Nome),
-    write('Digite o sexo do paciente: '), nl,
+    write('Digite o sexo do paciente: (*) '), nl,
     read(Sexo),
-    write('Digite a idade do paciente: '), nl,
+    write('Digite a idade do paciente: (*) '), nl,
     read(Idade),
-    write('O paciente tem hipertensão? (sim, nao): '), nl,
+    write('O paciente tem hipertensão? (sim, nao, _ ): '), nl,
     read(Hiper),
-    write('O paciente tem problemas cardíacos? (sim, nao): '), nl,
+    write('O paciente tem problemas cardíacos? (sim, nao, _): '), nl,
     read(Card),
-    write('O paciente é fumante? (sim, passado, nunca): '), nl,
+    write('O paciente é fumante? (sim, passado, nunca, _): '), nl,
     read(Fumante),
-    write('Digite o IMC do paciente: '), nl,
+    write('Digite o IMC do paciente ou _: '), nl,
     read(IMC),
-
-    write('Digite o nivel de Hemoglobina do paciente: '), nl,
+    write('Digite o nivel de Hemoglobina do paciente: (*) '), nl,
     read(Hemoglobina),
-    write('Digite o nivel de Glicose do paciente: '), nl,
+    write('Digite o nivel de Glicose do paciente: (*) '), nl,
     read(Glicose),
-    diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
-    assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)).
+
+    count_responded([Hiper, Card, Fumante, IMC], Count),
+
+    (Count < 2 -> 
+        write('Erro: Responda pelo menos duas das perguntas opcionais.'), nl, 
+        fail
+    ;
+        (Count =:= 2 ; Count =:= 3) ->
+            write('Você se considera uma pessoa sedentária? (sim, nao, _): '), nl,
+            read(Sedentario),
+            write('Você tem histórico de diabetes familiar? (sim, nao, _): '), nl,
+            read(HistDiabetes),
+            diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
+            assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes], StatusDiabetes))
+        ;
+            diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
+            assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes))
+    ).
+
+count_responded([], 0).
+count_responded([Resposta | Resto], Count) :-
+    (Resposta \= '_' -> count_responded(Resto, CountResto), Count is CountResto + 1 ;
+        count_responded(Resto, CountResto), Count is CountResto).
 
 listar_todos_pacientes :-
     diabetes(Atributos, StatusDiabetes),
@@ -283,4 +304,3 @@ main :-
 
 sair :- halt.
 
-:- initialization(main).
