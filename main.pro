@@ -176,13 +176,40 @@ editar_status_diabetes(NomePaciente, NovoValor) :-
     retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], _)),
     assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], NovoValor)).
 
-remover_paciente :-
-    write('Digite o nome do paciente que deseja remover: '), nl, read(NomePaciente),
-    retract(diabetes([NomePaciente, _, _, _, _, _, _, _, _], _)),
-    write('Paciente removido com sucesso.').
-
-
-
+    remover_paciente :-
+        write('Digite o nome do paciente que deseja remover: '), nl,
+        read(NomePaciente),
+        findall(Paciente, diabetes(Paciente, _), Pacientes),
+        filtrar_por_nome(Pacientes, NomePaciente, PacientesComMesmoNome),
+        (
+            PacientesComMesmoNome = [] ->
+                write('Nenhum paciente encontrado com esse nome.')
+            ;
+                write('Pacientes encontrados com o mesmo nome:'), nl,
+                listar_pacientes_numerados(PacientesComMesmoNome, 1),
+                write('Digite o número do paciente que deseja remover: '), nl,
+                read(IndiceRemover),
+                nth1(IndiceRemover, PacientesComMesmoNome, PacienteRemover),
+                retract(diabetes(PacienteRemover, _)),
+                write('Paciente removido com sucesso.')
+        ).
+    
+    % Predicado auxiliar para filtrar pacientes por nome
+    filtrar_por_nome([], _, []).
+    filtrar_por_nome([Paciente|Resto], Nome, [Paciente|RestoFiltrado]) :-A
+        nth0(0, Paciente, NomePaciente),
+        NomePaciente == Nome,
+        filtrar_por_nome(Resto, Nome, RestoFiltrado).
+    filtrar_por_nome([_|Resto], Nome, RestoFiltrado) :-
+        filtrar_por_nome(Resto, Nome, RestoFiltrado).
+    
+    % Lista os pacientes numerados
+    listar_pacientes_numerados([], _).
+    listar_pacientes_numerados([Paciente|Resto], Numero) :-
+        format('~w - ~w~n', [Numero, Paciente]),
+        NovoNumero is Numero + 1,
+        listar_pacientes_numerados(Resto, NovoNumero).
+    
 editar_paciente :-
     write('Escolha um paciente para editar (digite o nome): '), nl,
     read(NomePaciente),
