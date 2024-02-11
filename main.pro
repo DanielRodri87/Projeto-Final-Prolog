@@ -83,29 +83,58 @@ calcular_imc(Altura, Peso, IMC) :-
     IMC is Peso / (Altura * Altura),
     write('IMC: '), write(IMC), nl.
 
-adicionar_paciente :-
-    write('Digite o nome do paciente: '), nl,
-    read(Nome),
-    write('Digite o sexo do paciente: '), nl,
-    read(Sexo),
-    write('Digite a idade do paciente: '), nl,
-    read(Idade),
-    write('O paciente tem hipertensão? (sim, nao): '), nl,
-    read(Hiper),
-    write('O paciente tem problemas cardíacos? (sim, nao): '), nl,
-    read(Card),
-    write('O paciente é fumante? (sim, passado, nunca): '), nl,
-    read(Fumante),
-    write('Digite o IMC do paciente: '), nl,
-    read(IMC),
-
-    write('Digite o nivel de Hemoglobina do paciente: '), nl,
-    read(Hemoglobina),
-    write('Digite o nivel de Glicose do paciente: '), nl,
-    read(Glicose),
-    diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
-    assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)).
-
+    adicionar_paciente :-
+        write('Perguntas opcionais: use _ para não responder.'), nl,
+        write('Digite o nome do paciente: (*) '), nl,
+        read(Nome),
+        write('Digite o sexo do paciente: (*) '), nl,
+        read(Sexo),
+        write('Digite a idade do paciente: (*) '), nl,
+        read(Idade),
+        write('O paciente tem hipertensão? (sim, nao, _ ): '), nl,
+        read(Hiper),
+        write('O paciente tem problemas cardíacos? (sim, nao, _): '), nl,
+        read(Card),
+        write('O paciente é fumante? (sim, passado, nunca, _): '), nl,
+        read(Fumante),
+        write('Digite o IMC do paciente ou _: '), nl,
+        read(IMC),
+        write('Digite o nivel de Hemoglobina do paciente: (*) '), nl,
+        read(Hemoglobina),
+        write('Digite o nivel de Glicose do paciente: (*) '), nl,
+        read(Glicose),
+    
+        % Contar quantas perguntas opcionais foram respondidas
+        count_responded([Hiper, Card, Fumante, IMC], Count),
+    
+        % Verificar se pelo menos duas das perguntas opcionais foram respondidas
+        (Count < 2 -> 
+            write('Erro: Responda pelo menos duas das perguntas opcionais.'), nl, 
+            fail
+        ;
+            % Se pelo menos duas perguntas opcionais foram respondidas
+            (Count =:= 2 ; Count =:= 3) ->
+                % Faça duas novas perguntas
+                write('Você se considera uma pessoa sedentária? (sim, nao, _): '), nl,
+                read(Sedentario),
+                write('Você tem histórico de diabetes familiar? (sim, nao, _): '), nl,
+                read(HistDiabetes),
+                % Diagnóstico com as respostas adicionais
+                diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
+                % Adicionar paciente ao banco de dados
+                assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes], StatusDiabetes))
+            ;
+                % Se todas as perguntas opcionais foram respondidas
+                diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
+                assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes))
+        ).
+    
+    % Predicado auxiliar para contar quantas perguntas opcionais foram respondidas
+    count_responded([], 0).
+    count_responded([Resposta | Resto], Count) :-
+        (Resposta \= '_' -> count_responded(Resto, CountResto), Count is CountResto + 1 ;
+         count_responded(Resto, CountResto), Count is CountResto).
+    
 listar_todos_pacientes :-
     diabetes(Atributos, StatusDiabetes),
     write(Atributos), write(' - Status de Diabetes: '), write(StatusDiabetes), nl,
@@ -176,13 +205,40 @@ editar_status_diabetes(NomePaciente, NovoValor) :-
     retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], _)),
     assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], NovoValor)).
 
-remover_paciente :-
-    write('Digite o nome do paciente que deseja remover: '), nl, read(NomePaciente),
-    retract(diabetes([NomePaciente, _, _, _, _, _, _, _, _], _)),
-    write('Paciente removido com sucesso.').
-
-
-
+    remover_paciente :-
+        write('Digite o nome do paciente que deseja remover: '), nl,
+        read(NomePaciente),
+        findall(Paciente, diabetes(Paciente, _), Pacientes),
+        filtrar_por_nome(Pacientes, NomePaciente, PacientesComMesmoNome),
+        (
+            PacientesComMesmoNome = [] ->
+                write('Nenhum paciente encontrado com esse nome.')
+            ;
+                write('Pacientes encontrados com o mesmo nome:'), nl,
+                listar_pacientes_numerados(PacientesComMesmoNome, 1),
+                write('Digite o número do paciente que deseja remover: '), nl,
+                read(IndiceRemover),
+                nth1(IndiceRemover, PacientesComMesmoNome, PacienteRemover),
+                retract(diabetes(PacienteRemover, _)),
+                write('Paciente removido com sucesso.')
+        ).
+    
+    % Predicado auxiliar para filtrar pacientes por nome
+    filtrar_por_nome([], _, []).
+    filtrar_por_nome([Paciente|Resto], Nome, [Paciente|RestoFiltrado]) :-A
+        nth0(0, Paciente, NomePaciente),
+        NomePaciente == Nome,
+        filtrar_por_nome(Resto, Nome, RestoFiltrado).
+    filtrar_por_nome([_|Resto], Nome, RestoFiltrado) :-
+        filtrar_por_nome(Resto, Nome, RestoFiltrado).
+    
+    % Lista os pacientes numerados
+    listar_pacientes_numerados([], _).
+    listar_pacientes_numerados([Paciente|Resto], Numero) :-
+        format('~w - ~w~n', [Numero, Paciente]),
+        NovoNumero is Numero + 1,
+        listar_pacientes_numerados(Resto, NovoNumero).
+    
 editar_paciente :-
     write('Escolha um paciente para editar (digite o nome): '), nl,
     read(NomePaciente),
@@ -250,5 +306,3 @@ main :-
     ).
 
 sair :- halt.
-
-:- initialization(main).
