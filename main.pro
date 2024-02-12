@@ -84,7 +84,13 @@ calcular_imc(Altura, Peso, IMC) :-
     write('IMC: '), write(IMC), nl.
 
 adicionar_paciente :-
-    write('Perguntas opcionais: use _ para nao responder.'), nl,
+    write('----------------------------- ADICIONAR PACIENTE -----------------------------'), nl,
+    write('                                                                              '), nl,
+    write('  Preencha os campos abaixo para adicionar um novo paciente.                  '), nl,
+    write('  Perguntas Obrigatorias (*)                                                  '), nl,
+    write('  Opcionais podem ser respondidas por _                                       '), nl,
+    write('                                                                              '), nl,
+    write('------------------------------------------------------------------------------'), nl,
     write('Digite o nome do paciente: (*) '), nl,
     read(Nome),
     (
@@ -172,7 +178,6 @@ adicionar_paciente :-
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes))
     ).
-
 count_responded([], 0).
 count_responded([Resposta | Resto], Count) :-
     (Resposta \= '_', Resposta \= 0 ->
@@ -257,9 +262,9 @@ remover_paciente :-
     write('Digite o nome do paciente que deseja remover: '), nl,
     read(NomePaciente),
     (
-        diabetes(PacienteRemover, StatusDiabetes), % Obtemos o paciente e seu status de diabetes
-        nth0(0, PacienteRemover, NomePaciente), % Verifica se o nome do paciente corresponde ao fornecido
-        retract(diabetes(PacienteRemover, StatusDiabetes)), % Remove o paciente do banco de dados
+        diabetes(PacienteRemover, StatusDiabetes),
+        nth0(0, PacienteRemover, NomePaciente), 
+        retract(diabetes(PacienteRemover, StatusDiabetes)), 
         write('Paciente removido com sucesso.')
     ;
         write('Nenhum paciente encontrado com esse nome.')

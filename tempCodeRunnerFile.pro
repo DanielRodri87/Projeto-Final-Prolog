@@ -1,14 +1,14 @@
-       write('---------------------------- INFO PACIENTE ----------------------------'), nl,
-        write('|                                                                     |'), nl,
-        write('|  Paciente encontrado. Atributos atuais:                             |'), nl,
-        write('|                                                                     |'), nl,
-        write('|  Nome: '), write(NomePaciente), nl,
-        write('|  Sexo: '), write(Sexo), nl,
-        write('|  Idade: '), write(Idade), nl,
-        write('|  Hipertensao: '), write(Hiper), nl,
-        write('|  Problemas Cardiacos: '), write(Card), nl,
-        write('|  Fumante: '), write(Fumante), nl,
-        write('|  IMC: '), write(IMC), nl,
-        write('|  Hemoglobina: '), write(Hemoglobina), nl,
-        write('|  Glicose: '), write(Glicose), nl,
-        write('|  Status de Diabetes: '), write(StatusDiabetes), nl,
+
+listar_todos_pacientes :-
+    write('------------------------------------------------------'), nl,
+    write('|                LISTA DE PACIENTES                   |'), nl,
+    write('------------------------------------------------------'), nl,
+    listar_pacientes_aux.
+
+listar_pacientes_aux :-
+    diabetes(Atributos, StatusDiabetes),
+    format('| Nome: ~w', [Atributos]),
+    write(' - Status de Diabetes: '), write(StatusDiabetes), write(' |'), nl,
+    fail.
+listar_pacientes_aux :-
+    write('------------------------------------------------------'), nl.
