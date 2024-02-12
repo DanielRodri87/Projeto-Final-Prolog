@@ -197,45 +197,18 @@ editar_status_diabetes(NomePaciente, NovoValor) :-
     retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], _)),
     assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], NovoValor)).
 
-  % Predicado para remover um paciente do banco de dados
-remover_paciente :-
-    write('Digite o nome do paciente que deseja remover: '), nl,
-    read(NomePaciente),
-    findall(Paciente, diabetes(Paciente, _), Pacientes),
-    filtrar_por_nome(Pacientes, NomePaciente, PacientesComMesmoNome),
-    (
-        PacientesComMesmoNome = [] ->
-            write('Nenhum paciente encontrado com esse nome.')
-        ;
-            write('Pacientes encontrados com o mesmo nome:'), nl,
-            listar_pacientes_numerados(PacientesComMesmoNome, 1),
-            write('Digite o número do paciente que deseja remover: '), nl,
-            read(IndiceRemover),
-            nth1(IndiceRemover, PacientesComMesmoNome, PacienteRemover),
-            retract(diabetes(PacienteRemover, _)),
+    remover_paciente :-
+        write('Digite o nome do paciente que deseja remover: '), nl,
+        read(NomePaciente),
+        (
+            diabetes(PacienteRemover, StatusDiabetes), % Obtemos o paciente e seu status de diabetes
+            nth0(0, PacienteRemover, NomePaciente), % Verifica se o nome do paciente corresponde ao fornecido
+            retract(diabetes(PacienteRemover, StatusDiabetes)), % Remove o paciente do banco de dados
             write('Paciente removido com sucesso.')
-    ).
-
-% Predicado auxiliar para filtrar pacientes por nome
-filtrar_por_nome([], _, []).
-filtrar_por_nome([Paciente|Resto], Nome, [Paciente|RestoFiltrado]) :-
-    nth0(0, Paciente, AtributosPaciente),
-    nth0(0, AtributosPaciente, NomePaciente),
-    NomePaciente == Nome,
-    filtrar_por_nome(Resto, Nome, RestoFiltrado).
-filtrar_por_nome([_|Resto], Nome, RestoFiltrado) :-
-    filtrar_por_nome(Resto, Nome, RestoFiltrado).
-
-% Lista os pacientes numerados
-listar_pacientes_numerados([], _).
-listar_pacientes_numerados([Paciente|Resto], Numero) :-
-    nth0(0, Paciente, AtributosPaciente),
-    write(Numero), write(' - '), write(AtributosPaciente),
-    StatusDiabetes is Paciente,
-    write(' - Status de Diabetes: '), write(StatusDiabetes), nl,
-    NovoNumero is Numero + 1,
-    listar_pacientes_numerados(Resto, NovoNumero).
-
+        ;
+            write('Nenhum paciente encontrado com esse nome.')
+        ).
+    
 editar_paciente :-
     write('Escolha um paciente para editar (digite o nome): '), nl,
     read(NomePaciente),
