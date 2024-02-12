@@ -21,7 +21,7 @@ diabetes([heloise, masculino, 56.0, nao, nao, nunca, 26.78, 4.8, 200], nao).
 diabetes([benicio, masculino, 20.0, nao, nao, passado, 23.04, 5.7, 160], nao).
 diabetes([paulo, masculino, 70.0, nao, nao, passado, 15.94, 5.8, 158], nao).
 diabetes([otavio, masculino, 30.0, nao, nao, passado, 15.8, 6.2, 90], nao).
-diabetes([isis, feminino, 80.0, nao, nao, nunca, 22.04, 9.0, 209], sim)
+diabetes([isis, feminino, 80.0, nao, nao, nunca, 22.04, 9.0, 209], sim).
 diabetes([francivaldo, masculino, 63.0, nao, sim, passado, 27.32, 6.6, 300], sim).
 diabetes([juvelino, masculino, 58.0, nao, nao, passado, 32.38, 6.6, 159], sim).
 diabetes([maya, feminino, 43.0, sim, nao, nunca, 34.21, 9.0, 160], sim).
@@ -83,26 +83,61 @@ calcular_imc(Altura, Peso, IMC) :-
     IMC is Peso / (Altura * Altura),
     write('IMC: '), write(IMC), nl.
 
-adicionar_paciente :-
-    write('Perguntas opcionais: use _ para não responder.'), nl,
-    write('Digite o nome do paciente: (*) '), nl,
-    read(Nome),
-    write('Digite o sexo do paciente: (*) '), nl,
-    read(Sexo),
-    write('Digite a idade do paciente: (*) '), nl,
-    read(Idade),
-    write('O paciente tem hipertensão? (sim, nao, _ ): '), nl,
-    read(Hiper),
-    write('O paciente tem problemas cardíacos? (sim, nao, _): '), nl,
-    read(Card),
-    write('O paciente é fumante? (sim, passado, nunca, _): '), nl,
-    read(Fumante),
-    write('Digite o IMC do paciente ou 0 para vazio: '), nl,
-    read(IMC),
-    write('Digite o nivel de Hemoglobina do paciente: (*) '), nl,
-    read(Hemoglobina),
-    write('Digite o nivel de Glicose do paciente: (*) '), nl,
-    read(Glicose),
+    adicionar_paciente :-
+        write('Perguntas opcionais: use _ para nao responder.'), nl,
+        write('Digite o nome do paciente: (*) '), nl,
+        read(Nome),
+        (
+            Nome = '_',
+            write('Atributo obrigatorio'),
+            !, fail
+        ;
+            true
+        ),
+        write('Digite o sexo do paciente: (*) '), nl,
+        read(Sexo),
+        (
+            Sexo = '_',
+            write('Atributo obrigatorio'),
+            !, fail
+        ;
+            true
+        ),
+        write('Digite a idade do paciente: (*) '), nl,
+        read(Idade),
+        (
+            Idade = '_',
+            write('Atributo obrigatorio'),
+            !, fail
+        ;
+            true
+        ),
+        write('Digite o nivel de Hemoglobina do paciente: (*) '), nl,
+        read(Hemoglobina),
+        (
+            Hemoglobina = '_',
+            write('Atributo obrigatorio'),
+            !, fail
+        ;
+            true
+        ),
+        write('Digite o nivel de Glicose do paciente: (*) '), nl,
+        read(Glicose),
+        (
+            Glicose = '_',
+            write('Atributo obrigatorio'),
+            !, fail
+        ;
+            true
+        ),
+        write('O paciente tem hipertensao? (sim, nao, _ ): '), nl,
+        read(Hiper),
+        write('O paciente tem problemas cardiacos? (sim, nao, _): '), nl,
+        read(Card),
+        write('O paciente e fumante? (sim, passado, nunca, _): '), nl,
+        read(Fumante),
+        write('Digite o IMC do paciente ou 0 para vazio: '), nl,
+        read(IMC).    
 
     count_responded([Hiper, Card, Fumante, IMC], Count),
 
@@ -111,9 +146,9 @@ adicionar_paciente :-
         fail
     ;
         (Count =:= 2 ; Count =:= 3) ->
-            write('Você se considera uma pessoa sedentária? (sim, nao, _): '), nl,
+            write('Você se considera uma pessoa sedentaria? (sim, nao, _): '), nl,
             read(Sedentario),
-            write('Você tem histórico de diabetes familiar? (sim, nao, _): '), nl,
+            write('Você tem historico de diabetes familiar? (sim, nao, _): '), nl,
             read(HistDiabetes),
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes], StatusDiabetes))
@@ -138,8 +173,8 @@ editar_atributo(NomePaciente, Atributo, NovoValor) :-
     Atributo = 'Nome' -> editar_nome(NomePaciente, NovoValor);
     Atributo = 'Sexo' -> editar_sexo(NomePaciente, NovoValor);
     Atributo = 'Idade' -> editar_idade(NomePaciente, NovoValor);
-    Atributo = 'Hipertensão' -> editar_hipertensao(NomePaciente, NovoValor);
-    Atributo = 'Problemas Cardíacos' -> editar_problemas_cardiacos(NomePaciente, NovoValor);
+    Atributo = 'Hipertensao' -> editar_hipertensao(NomePaciente, NovoValor);
+    Atributo = 'Problemas Cardiacos' -> editar_problemas_cardiacos(NomePaciente, NovoValor);
     Atributo = 'Fumante' -> editar_fumante(NomePaciente, NovoValor);
     Atributo = 'IMC' -> editar_imc(NomePaciente, NovoValor);
     Atributo = 'Hemoglobina' -> editar_hemoglobina(NomePaciente, NovoValor);
@@ -163,12 +198,12 @@ editar_idade(NomePaciente, NovoValor) :-
     assertz(diabetes([NomePaciente, Sexo, NovoValor, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)).
 
 editar_hipertensao(NomePaciente, NovoValor) :-
-    write('Digite o novo valor para Hipertensão (sim, nao): '), nl, read(NovoValor),
+    write('Digite o novo valor para Hipertensao (sim, nao): '), nl, read(NovoValor),
     retract(diabetes([NomePaciente, Sexo, Idade, _, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)),
     assertz(diabetes([NomePaciente, Sexo, Idade, NovoValor, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)).
 
 editar_problemas_cardiacos(NomePaciente, NovoValor) :-
-    write('Digite o novo valor para Problemas Cardíacos (sim, nao): '), nl, read(NovoValor),
+    write('Digite o novo valor para Problemas Cardiacos (sim, nao): '), nl, read(NovoValor),
     retract(diabetes([NomePaciente, Sexo, Idade, Hiper, _, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)),
     assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, NovoValor, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes)).
 
@@ -197,17 +232,17 @@ editar_status_diabetes(NomePaciente, NovoValor) :-
     retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], _)),
     assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], NovoValor)).
 
-    remover_paciente :-
-        write('Digite o nome do paciente que deseja remover: '), nl,
-        read(NomePaciente),
-        (
-            diabetes(PacienteRemover, StatusDiabetes), % Obtemos o paciente e seu status de diabetes
-            nth0(0, PacienteRemover, NomePaciente), % Verifica se o nome do paciente corresponde ao fornecido
-            retract(diabetes(PacienteRemover, StatusDiabetes)), % Remove o paciente do banco de dados
-            write('Paciente removido com sucesso.')
-        ;
-            write('Nenhum paciente encontrado com esse nome.')
-        ).
+remover_paciente :-
+    write('Digite o nome do paciente que deseja remover: '), nl,
+    read(NomePaciente),
+    (
+        diabetes(PacienteRemover, StatusDiabetes), % Obtemos o paciente e seu status de diabetes
+        nth0(0, PacienteRemover, NomePaciente), % Verifica se o nome do paciente corresponde ao fornecido
+        retract(diabetes(PacienteRemover, StatusDiabetes)), % Remove o paciente do banco de dados
+        write('Paciente removido com sucesso.')
+    ;
+        write('Nenhum paciente encontrado com esse nome.')
+    ).
     
 editar_paciente :-
     write('Escolha um paciente para editar (digite o nome): '), nl,
@@ -218,8 +253,8 @@ editar_paciente :-
         write('Nome: '), write(NomePaciente), nl,
         write('Sexo: '), write(Sexo), nl,
         write('Idade: '), write(Idade), nl,
-        write('Hipertensão: '), write(Hiper), nl,
-        write('Problemas Cardíacos: '), write(Card), nl,
+        write('Hipertensao: '), write(Hiper), nl,
+        write('Problemas Cardiacos: '), write(Card), nl,
         write('Fumante: '), write(Fumante), nl,
         write('IMC: '), write(IMC), nl,
         write('Hemoglobina: '), write(Hemoglobina), nl,
@@ -229,8 +264,8 @@ editar_paciente :-
         write('1 - Nome'), nl,
         write('2 - Sexo'), nl,
         write('3 - Idade'), nl,
-        write('4 - Hipertensão'), nl,
-        write('5 - Problemas Cardíacos'), nl,
+        write('4 - Hipertensao'), nl,
+        write('5 - Problemas Cardiacos'), nl,
         write('6 - Fumante'), nl,
         write('7 - IMC'), nl,
         write('8 - Hemoglobina'), nl,
@@ -241,8 +276,8 @@ editar_paciente :-
             OpcaoEditar = 1 -> editar_atributo(NomePaciente, 'Nome', _);
             OpcaoEditar = 2 -> editar_atributo(NomePaciente, 'Sexo', _);
             OpcaoEditar = 3 -> editar_atributo(NomePaciente, 'Idade', _);
-            OpcaoEditar = 4 -> editar_atributo(NomePaciente, 'Hipertensão', _);
-            OpcaoEditar = 5 -> editar_atributo(NomePaciente, 'Problemas Cardíacos', _);
+            OpcaoEditar = 4 -> editar_atributo(NomePaciente, 'Hipertensao', _);
+            OpcaoEditar = 5 -> editar_atributo(NomePaciente, 'Problemas Cardiacos', _);
             OpcaoEditar = 6 -> editar_atributo(NomePaciente, 'Fumante', _);
             OpcaoEditar = 7 -> editar_atributo(NomePaciente, 'IMC', _);
             OpcaoEditar = 8 -> editar_atributo(NomePaciente, 'Hemoglobina', _);
@@ -251,7 +286,7 @@ editar_paciente :-
         ),
         main
     ;
-        write('Paciente não encontrado.')
+        write('Paciente nao encontrado.')
     ).
 
 
