@@ -97,7 +97,7 @@ adicionar_paciente :-
     read(Card),
     write('O paciente é fumante? (sim, passado, nunca, _): '), nl,
     read(Fumante),
-    write('Digite o IMC do paciente ou _: '), nl,
+    write('Digite o IMC do paciente ou 0 para vazio: '), nl,
     read(IMC),
     write('Digite o nivel de Hemoglobina do paciente: (*) '), nl,
     read(Hemoglobina),
@@ -303,4 +303,3 @@ main :-
     ).
 
 sair :- halt.
-
