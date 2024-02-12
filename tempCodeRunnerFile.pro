@@ -1,1 +1,1 @@
-diabetes([isis, feminino, 80.0, nao, nao, nunca, 22.04, 9.0, 209], sim)
+diabetes([juvelino, masculino, 58.0, nao, nao, passado, 32.38, 6.6, 159], sim).

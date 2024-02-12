@@ -163,13 +163,10 @@ adicionar_paciente :-
             read(Sedentario),
             write('Voce tem historico de diabetes familiar? (sim, nao, _): '), nl,
             read(HistDiabetes),
-            write('Voce sente sede frequentemente? (sim, nao, _): '), nl,
-            read(SedeFrequente),
-            (SedeFrequente = sim -> Counter11 is 3; Counter11 is 0),
-            (HistDiabetes = sim -> Counter12 is Counter11 + 2; Counter12 is Counter11),
-            (Sedentario = sim -> Counter13 is Counter12 + 1; Counter13 is Counter12),
+            (HistDiabetes = sim -> Counter11 is 2; Counter11 is 0),
+            (Sedentario = sim -> Counter12 is Counter11 + 1; Counter12 is Counter11),
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
-            assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente], StatusDiabetes))
+            assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes], StatusDiabetes))
         ;
         Count >= 3 ->
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
