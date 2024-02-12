@@ -164,7 +164,7 @@ adicionar_paciente :-
             write('Voce tem historico de diabetes familiar? (sim, nao, _): '), nl,
             read(HistDiabetes),
             (HistDiabetes = sim -> Counter11 is 2; Counter11 is 0),
-            (Sedentario = sim -> Counter12 is Counter11 + 1; Counter12 is Counter11),
+            (Sedentario = sim -> Counter12 is Counter11 + 1; Counter12 is Counter11),-
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes], StatusDiabetes))
         ;
@@ -310,13 +310,27 @@ editar_paciente :-
         write('Paciente nao encontrado.')
     ).
 
-
 main :-
-    write('1 - Adicionar paciente'), nl,
-    write('2 - Listar todos os pacientes'), nl,
-    write('3 - Editar paciente'), nl,
-    write('4 - Remover Paciente'), nl,
-    write('5 - Sair'), nl,
+    write('----------------------------------------------------------------------------'), nl,
+    write('|                                                                          |'), nl,
+    write('|                                                                          |'), nl,
+    write('|          ::: ( )_( )...*...*...*...*...*...*...*...( )_( )               |'), nl,
+    write('|                                                                          |'), nl,
+    write('|            :: -->    SISTEMA DE APOIO DIABETICOS                         |'), nl,
+    write('|                                                                          |'), nl,
+    write('|          ::: ( )_( )...*...*...*...*...*...*...*...( )_( )               |'), nl,
+    write('|                                                                          |'), nl,
+    write('|                                                                          |'), nl,
+    write('----------------------------------------------------------------------------'), nl,
+
+    write('----------------------------- MENU -----------------------------------------'), nl,
+    write('| 1 - Adicionar paciente'), nl,
+    write('| 2 - Listar todos os pacientes'), nl,
+    write('| 3 - Editar paciente'), nl,
+    write('| 4 - Remover paciente'), nl,
+    write('| 5 - Sair'), nl,
+    write('----------------------------------------------------------------------------'), nl,
+    write('-> '),
     
     read(Opcao),
     (
