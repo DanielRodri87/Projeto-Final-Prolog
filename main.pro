@@ -83,84 +83,108 @@ calcular_imc(Altura, Peso, IMC) :-
     IMC is Peso / (Altura * Altura),
     write('IMC: '), write(IMC), nl.
 
-    adicionar_paciente :-
-        write('Perguntas opcionais: use _ para nao responder.'), nl,
-        write('Digite o nome do paciente: (*) '), nl,
-        read(Nome),
-        (
-            Nome = '_',
-            write('Atributo obrigatorio'),
-            !, fail
-        ;
-            true
-        ),
-        write('Digite o sexo do paciente: (*) '), nl,
-        read(Sexo),
-        (
-            Sexo = '_',
-            write('Atributo obrigatorio'),
-            !, fail
-        ;
-            true
-        ),
-        write('Digite a idade do paciente: (*) '), nl,
-        read(Idade),
-        (
-            Idade = '_',
-            write('Atributo obrigatorio'),
-            !, fail
-        ;
-            true
-        ),
-        write('Digite o nivel de Hemoglobina do paciente: (*) '), nl,
-        read(Hemoglobina),
-        (
-            Hemoglobina = '_',
-            write('Atributo obrigatorio'),
-            !, fail
-        ;
-            true
-        ),
-        write('Digite o nivel de Glicose do paciente: (*) '), nl,
-        read(Glicose),
-        (
-            Glicose = '_',
-            write('Atributo obrigatorio'),
-            !, fail
-        ;
-            true
-        ),
-        write('O paciente tem hipertensao? (sim, nao, _ ): '), nl,
-        read(Hiper),
-        write('O paciente tem problemas cardiacos? (sim, nao, _): '), nl,
-        read(Card),
-        write('O paciente e fumante? (sim, passado, nunca, _): '), nl,
-        read(Fumante),
-        write('Digite o IMC do paciente ou 0 para vazio: '), nl,
-        read(IMC).    
-
+adicionar_paciente :-
+    write('Perguntas opcionais: use _ para nao responder.'), nl,
+    write('Digite o nome do paciente: (*) '), nl,
+    read(Nome),
+    (
+        Nome = '_',
+        write('Atributo obrigatorio'),
+        !, fail
+    ;
+        true
+    ),
+    write('Digite o sexo do paciente: (*) '), nl,
+    read(Sexo),
+    (
+        Sexo = '_',
+        write('Atributo obrigatorio'),
+        !, fail
+    ;
+        true
+    ),
+    write('Digite a idade do paciente: (*) '), nl,
+    read(Idade),
+    (
+        Idade = '_',
+        write('Atributo obrigatorio'),
+        !, fail
+    ;
+        true
+    ),
+    write('Digite o nivel de Hemoglobina do paciente: (*) '), nl,
+    read(Hemoglobina),
+    (
+        Hemoglobina = '_',
+        write('Atributo obrigatorio'),
+        !, fail
+    ;
+        true
+    ),
+    write('Digite o nivel de Glicose do paciente: (*) '), nl,
+    read(Glicose),
+    (
+        Glicose = '_',
+        write('Atributo obrigatorio'),
+        !, fail
+    ;
+        true
+    ),
+    write('O paciente tem hipertensao? (sim, nao, _ ): '), nl,
+    read(Hiper),
+    write('O paciente tem problemas cardiacos? (sim, nao, _): '), nl,
+    read(Card),
+    write('O paciente e fumante? (sim, passado, nunca, _): '), nl,
+    read(Fumante),
+    write('Digite o IMC do paciente ou 0 para vazio: '), nl,
+    read(IMC),
     count_responded([Hiper, Card, Fumante, IMC], Count),
 
-    (Count < 2 -> 
-        write('Erro: Responda pelo menos duas das perguntas opcionais.'), nl, 
-        fail
-    ;
-        (Count =:= 2 ; Count =:= 3) ->
-            write('Você se considera uma pessoa sedentaria? (sim, nao, _): '), nl,
-            read(Sedentario),
-            write('Você tem historico de diabetes familiar? (sim, nao, _): '), nl,
-            read(HistDiabetes),
-            diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
-            assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes], StatusDiabetes))
+    (
+        Count =:= 0 ->
+            write('Sugiro novos exames e para novo diagnostico.'), nl,
+            fail
         ;
+        Count =:= 1 ->
+            write('Voce se considera uma pessoa sedentaria? (sim, nao, _): '), nl,
+            read(Sedentario),
+            write('Voce tem historico de diabetes familiar? (sim, nao, _): '), nl,
+            read(HistDiabetes),
+            write('Voce sente sede frequentemente? (sim, nao, _): '), nl,
+            read(SedeFrequente),
+            (SedeFrequente = sim -> Counter8 is 3; Counter8 is 0),
+            (HistDiabetes = sim -> Counter9 is Counter8 + 2; Counter9 is Counter8),
+            (Sedentario = sim -> Counter10 is Counter9 + 1; Counter10 is Counter9),
+            diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
+            assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente], StatusDiabetes))
+        ;
+        Count =:= 2 ->
+            write('Voce se considera uma pessoa sedentaria? (sim, nao, _): '), nl,
+            read(Sedentario),
+            write('Voce tem historico de diabetes familiar? (sim, nao, _): '), nl,
+            read(HistDiabetes),
+            write('Voce sente sede frequentemente? (sim, nao, _): '), nl,
+            read(SedeFrequente),
+            (SedeFrequente = sim -> Counter11 is 3; Counter11 is 0),
+            (HistDiabetes = sim -> Counter12 is Counter11 + 2; Counter12 is Counter11),
+            (Sedentario = sim -> Counter13 is Counter12 + 1; Counter13 is Counter12),
+            diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
+            assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente], StatusDiabetes))
+        ;
+        Count >= 3 ->
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes))
     ).
 
 count_responded([], 0).
 count_responded([Resposta | Resto], Count) :-
-    (Resposta \= '_' -> count_responded(Resto, CountResto), Count is CountResto + 1 ;
-        count_responded(Resto, CountResto), Count is CountResto).
+    (Resposta \= '_', Resposta \= 0 ->
+        count_responded(Resto, CountResto),
+        Count is CountResto + 1 
+    ;
+        count_responded(Resto, CountResto),
+        Count is CountResto
+    ).
 
 listar_todos_pacientes :-
     diabetes(Atributos, StatusDiabetes),
@@ -295,9 +319,7 @@ main :-
     write('2 - Listar todos os pacientes'), nl,
     write('3 - Editar paciente'), nl,
     write('4 - Remover Paciente'), nl,
-    write('5 - Calcular IMC'), nl,
-    write('7 - Diagnosticar Paciente'), nl,
-    write('8 - Sair'), nl,
+    write('5 - Sair'), nl,
     
     read(Opcao),
     (
@@ -305,9 +327,7 @@ main :-
         Opcao = 2 -> listar_todos_pacientes, main;
         Opcao = 3 -> editar_paciente, main;
         Opcao = 4 -> remover_paciente, main;
-        Opcao = 5 -> calcular_imc, main;
-        Opcao = 6 -> diagnosticar_paciente, main;
-        Opcao = 7 -> sair
+        Opcao = 5 -> sair
     ).
 
 sair :- halt.
