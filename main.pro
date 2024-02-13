@@ -63,10 +63,10 @@ diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina,
 
     intervalo_hemoglobina_status_sim_diabetes(MediaHemoglobinaSim, MinHemo),
     intervalo_glicose_status_sim_diabetes(MediaGlicoseSim, MinGlicose),
-    write('Media Hemoglobina Sim: '), write(MediaHemoglobinaSim), nl,
-    write('Min Hemoglobina Sim: '), write(MinHemo), nl,
-    write('Media Glicose Sim: '), write(MediaGlicoseSim), nl,
-    write('Min Glicose Sim: '), write(MinGlicose), nl,
+    % write('Media Hemoglobina Sim: '), write(MediaHemoglobinaSim), nl,
+    % write('Min Hemoglobina Sim: '), write(MinHemo), nl,
+    % write('Media Glicose Sim: '), write(MediaGlicoseSim), nl,
+    % write('Min Glicose Sim: '), write(MinGlicose), nl,
 
     (Hemoglobina > 8.9 -> Counter5 is Counter4 + 11; Counter5 is Counter4),
 
@@ -95,8 +95,8 @@ adicionar_paciente :-
     read(Nome),
     (
         Nome = '_',
-        write('Atributo obrigatorio'),
-        !, fail
+        write('Atributo obrigatorio\n\n'),
+        !, main
     ;
         true
     ),
@@ -104,8 +104,8 @@ adicionar_paciente :-
     read(Sexo),
     (
         Sexo = '_',
-        write('Atributo obrigatorio'),
-        !, fail
+        write('Atributo obrigatorio\n\n'),
+        !, main
     ;
         true
     ),
@@ -113,8 +113,8 @@ adicionar_paciente :-
     read(Idade),
     (
         Idade = '_',
-        write('Atributo obrigatorio'),
-        !, fail
+        write('Atributo obrigatorio\n\n'),
+        !, main
     ;
         true
     ),
@@ -122,8 +122,8 @@ adicionar_paciente :-
     read(Hemoglobina),
     (
         Hemoglobina = '_',
-        write('Atributo obrigatorio'),
-        !, fail
+        write('Atributo obrigatorio\n\n'),
+        !, main
     ;
         true
     ),
@@ -131,8 +131,8 @@ adicionar_paciente :-
     read(Glicose),
     (
         Glicose = '_',
-        write('Atributo obrigatorio'),
-        !, fail
+        write('Atributo obrigatorio\n\n'),
+        !, main
     ;
         true
     ),
@@ -148,8 +148,8 @@ adicionar_paciente :-
 
     (
         Count =:= 0 ->
-            write('Sugiro novos exames e para novo diagnostico.'), nl,
-            fail
+            write('Sugiro novos exames e para novo diagnostico.\n\n'), nl,
+            main
         ;
         Count =:= 1 ->
             write('Voce se considera uma pessoa sedentaria? (sim, nao, _): '), nl,
@@ -170,7 +170,7 @@ adicionar_paciente :-
             write('Voce tem historico de diabetes familiar? (sim, nao, _): '), nl,
             read(HistDiabetes),
             (HistDiabetes = sim -> Counter11 is 2; Counter11 is 0),
-            (Sedentario = sim -> Counter12 is Counter11 + 1; Counter12 is Counter11),-
+            (Sedentario = sim -> Counter12 is Counter11 + 1; Counter12 is Counter11),
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes], StatusDiabetes))
         ;
@@ -178,6 +178,8 @@ adicionar_paciente :-
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes))
     ).
+
+
 count_responded([], 0).
 count_responded([Resposta | Resto], Count) :-
     (Resposta \= '_', Resposta \= 0 ->
