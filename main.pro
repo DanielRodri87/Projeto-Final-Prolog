@@ -119,7 +119,8 @@ adicionar_paciente :-
         !, main
     ;
         Idade > 130,
-        write('Dados inconsistentes, faca um novo exame!\n\n')
+        write('Dados inconsistentes, faca um novo exame!\n\n'),
+        !, main
     ;
         true
     ),
@@ -131,7 +132,8 @@ adicionar_paciente :-
         !, main
     ;
         Hemoglobina > 30,
-        write('Dados inconsistentes, faca um novo exame!\n\n')
+        write('Dados inconsistentes, faca um novo exame!\n\n'),
+        !, main
     ;
         true
     ),
@@ -143,7 +145,8 @@ adicionar_paciente :-
         !, main
     ;
         Glicose > 500,
-        write('Dados inconsistentes, faca um novo exame!\n\n')
+        write('Dados inconsistentes, faca um novo exame!\n\n'),
+        !, main
     ;
         true
     ),
@@ -153,7 +156,7 @@ adicionar_paciente :-
     read(Card),
     write('O paciente e fumante? (sim, passado, nunca, _): '), nl,
     read(Fumante),
-    write('Calcular IMC do paciente: 1 - Calcular, 0 - Vazia: '), nl,
+    write('Calcular IMC do paciente: 1 - Calcular, 0 - Vazio: '), nl,
     read(Pergunta_IMC),
     (
         Pergunta_IMC =:= 1 -> calcular_imc(Altura, Peso, IMC);
@@ -224,6 +227,7 @@ adicionar_paciente :-
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose], StatusDiabetes))
     ).
+
 
 
 gestor_respostas([], 0).
