@@ -55,26 +55,27 @@ intervalo_glicose_status_sim_diabetes(MediaG, MinGlicose) :-
     ).
 
 
-diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente, StatusDiabetes) :-
-    (Hiper == sim -> Counter1 is 2; Counter1 is 0),
-    (Card == sim -> Counter2 is Counter1 + 1; Counter2 is Counter1),
-    (Fumante == sim -> Counter3 is Counter2 + 2; (Fumante == passado -> Counter3 is Counter2 + 1; Counter3 is Counter2)),
-
-    (IMC > 24.9, IMC < 29.9 -> Counter4 is Counter3 + 1; (IMC >= 30 -> Counter4 is Counter3 + 2; Counter4 is Counter3)),
-
-    intervalo_hemoglobina_status_sim_diabetes(MediaHemoglobinaSim, MinHemo),
-    intervalo_glicose_status_sim_diabetes(MediaGlicoseSim, MinGlicose),
-
-    (Hemoglobina > 8.9 -> Counter5 is Counter4 + 11; Counter5 is Counter4),
-
-    (Glicose > MinGlicose -> Counter6 is Counter5 + 2; Counter6 is Counter5),
-    (Hemoglobina > MinHemo -> Counter7 is Counter6 + 2; Counter7 is Counter6),
-
-    (Sedentario == sim -> Counter8 is Counter7 + 1; Counter8 is Counter7),
-    (HistDiabetes == sim -> Counter9 is Counter8 + 2; Counter9 is Counter8),
-    (SedeFrequente == sim -> Counter10 is Counter9 + 3; Counter10 is Counter9),
-
-    (Counter10 >= 5 -> StatusDiabetes = sim; StatusDiabetes = nao).
+    diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente, StatusDiabetes) :-
+        (Hiper == sim -> Counter1 is 2; Counter1 is 0),
+        (Card == sim -> Counter2 is Counter1 + 1; Counter2 is Counter1),
+        (Fumante == sim -> Counter3 is Counter2 + 2; (Fumante == passado -> Counter3 is Counter2 + 1; Counter3 is Counter2)),
+    
+        (IMC > 24.9, IMC < 29.9 -> Counter4 is Counter3 + 1; (IMC >= 30 -> Counter4 is Counter3 + 2; Counter4 is Counter3)),
+    
+        intervalo_hemoglobina_status_sim_diabetes(MediaHemoglobinaSim, MinHemo),
+        intervalo_glicose_status_sim_diabetes(MediaGlicoseSim, MinGlicose),
+    
+        (Hemoglobina > MediaHemoglobinaSim -> Counter5 is Counter4 + 11; Counter5 is Counter4),
+    
+        (Glicose > MediaGlicoseSim -> Counter6 is Counter5 + 2; Counter6 is Counter5),
+        (Hemoglobina > MinHemo -> Counter7 is Counter6 + 2; Counter7 is Counter6),
+    
+        (Sedentario == sim -> Counter8 is Counter7 + 1; Counter8 is Counter7),
+        (HistDiabetes == sim -> Counter9 is Counter8 + 2; Counter9 is Counter8),
+        (SedeFrequente == sim -> Counter10 is Counter9 + 3; Counter10 is Counter9),
+    
+        (Counter10 >= 5 -> StatusDiabetes = sim; StatusDiabetes = nao).
+    
 
 calcular_imc(Altura, Peso, IMC) :-
     write('Digite a altura do paciente: (em metros) '), nl,
@@ -241,15 +242,21 @@ editar_imc(NomePaciente, NovoValor) :-
     retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, _, Hemoglobina, Glicose], StatusDiabetes)),
     assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, NovoValor, Hemoglobina, Glicose], StatusDiabetes)).
 
-editar_hemoglobina(NomePaciente, NovoValor) :-
-    write('Digite o novo valor para Hemoglobina: '), nl, read(NovoValor),
-    retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, _, Glicose], StatusDiabetes)),
-    assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, NovoValor, Glicose], StatusDiabetes)).
-
-editar_glicose(NomePaciente, NovoValor) :-
-    write('Digite o novo valor para Glicose: '), nl, read(NovoValor),
-    retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, _], StatusDiabetes)),
-    assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, NovoValor], StatusDiabetes)).
+    editar_hemoglobina(NomePaciente, NovoValor) :-
+        write('Digite o novo valor para Hemoglobina: '), nl, read(NovoValor),
+        retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, _, Glicose], StatusDiabetes)),
+        assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, NovoValor, Glicose], StatusDiabetes)),
+        diagnosticar_diabetes(NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, NovoValor, Glicose, Sedentario, HistDiabetes, SedeFrequente, NovoStatus),
+        retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, NovoValor, Glicose], _)),
+        assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, NovoValor, Glicose], NovoStatus)).
+    
+    editar_glicose(NomePaciente, NovoValor) :-
+        write('Digite o novo valor para Glicose: '), nl, read(NovoValor),
+        retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, _], StatusDiabetes)),
+        assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, NovoValor], StatusDiabetes)),
+        diagnosticar_diabetes(NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, NovoValor, Sedentario, HistDiabetes, SedeFrequente, NovoStatus),
+        retract(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, NovoValor], _)),
+        assertz(diabetes([NomePaciente, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, NovoValor], NovoStatus)).
 
 editar_status_diabetes(NomePaciente, NovoValor) :-
     write('Digite o novo valor para Status de Diabetes (sim, nao): '), nl, read(NovoValor),
