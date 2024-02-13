@@ -118,6 +118,9 @@ adicionar_paciente :-
         write('Atributo obrigatorio\n\n'),
         !, main
     ;
+        Idade > 130,
+        write('Dados inconsistentes, faca um novo exame!\n\n')
+    ;
         true
     ),
     write('Digite o nivel de Hemoglobina do paciente: (*) '), nl,
@@ -126,6 +129,9 @@ adicionar_paciente :-
         Hemoglobina = '_',
         write('Atributo obrigatorio\n\n'),
         !, main
+    ;
+        Hemoglobina > 30,
+        write('Dados inconsistentes, faca um novo exame!\n\n')
     ;
         true
     ),
@@ -136,6 +142,9 @@ adicionar_paciente :-
         write('Atributo obrigatorio\n\n'),
         !, main
     ;
+        Glicose > 500,
+        write('Dados inconsistentes, faca um novo exame!\n\n')
+    ;
         true
     ),
     write('O paciente tem hipertensao? (sim, nao, _ ): '), nl,
@@ -144,9 +153,13 @@ adicionar_paciente :-
     read(Card),
     write('O paciente e fumante? (sim, passado, nunca, _): '), nl,
     read(Fumante),
-    write('Digite o IMC do paciente ou 0 para vazio: '), nl,
-    read(IMC),
-    count_responded([Hiper, Card, Fumante, IMC], Count),
+    write('Calcular IMC do paciente: 1 - Calcular, 0 - Vazia: '), nl,
+    read(Pergunta_IMC),
+    (
+        Pergunta_IMC =:= 1 -> calcular_imc(Altura, Peso, IMC);
+        IMC = 0
+    ),
+    gestor_respostas([Hiper, Card, Fumante, IMC], Count),
 
     (
         Count =:= 0 ->
@@ -154,20 +167,56 @@ adicionar_paciente :-
             main
         ;
         Count =:= 1 ->
-            write('Voce se considera uma pessoa sedentaria? (sim, nao, _): '), nl,
+            write('Voce se considera uma pessoa sedentaria? (*): '), nl,
             read(Sedentario),
-            write('Voce tem historico de diabetes familiar? (sim, nao, _): '), nl,
+            (
+                Sedentario = '_',
+                write('Atributo obrigatorio\n\n'),
+                !, main
+            ;
+                true
+            ),
+            write('Voce tem historico de diabetes familiar? (*): '), nl,
             read(HistDiabetes),
-            write('Voce sente sede frequentemente? (sim, nao, _): '), nl,
+            (
+                HistDiabetes = '_',
+                write('Atributo obrigatorio\n\n'),
+                !, main
+            ;
+                true
+            ),
+            write('Voce sente sede frequentemente? (*): '), nl,
             read(SedeFrequente),
+            (
+                SedeFrequente = '_',
+                write('Atributo obrigatorio\n\n'),
+                !, main
+            ;
+                true
+            ),
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente], StatusDiabetes))
         ;
         Count =:= 2 ->
-            write('Voce se considera uma pessoa sedentaria? (sim, nao, _): '), nl,
+            write('Voce se considera uma pessoa sedentaria? (*): '), nl,
             read(Sedentario),
-            write('Voce tem historico de diabetes familiar? (sim, nao, _): '), nl,
+            (
+                Sedentario = '_',
+                write('Atributo obrigatorio\n\n'),
+                !, main
+            ;
+                true
+            ),
+
+            write('Voce tem historico de diabetes familiar? (*): '), nl,
             read(HistDiabetes),
+            (
+                HistDiabetes = '_',
+                write('Atributo obrigatorio\n\n'),
+                !, main
+            ;
+                true
+            ),
             diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente, StatusDiabetes),
             assertz(diabetes([Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes], StatusDiabetes))
         ;
@@ -177,13 +226,13 @@ adicionar_paciente :-
     ).
 
 
-count_responded([], 0).
-count_responded([Resposta | Resto], Count) :-
+gestor_respostas([], 0).
+gestor_respostas([Resposta | Resto], Count) :-
     (Resposta \= '_', Resposta \= 0 ->
-        count_responded(Resto, CountResto),
+        gestor_respostas(Resto, CountResto),
         Count is CountResto + 1 
     ;
-        count_responded(Resto, CountResto),
+        gestor_respostas(Resto, CountResto),
         Count is CountResto
     ).
 
