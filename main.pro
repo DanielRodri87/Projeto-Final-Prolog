@@ -56,25 +56,31 @@ intervalo_glicose_status_sim_diabetes(MediaG, MinGlicose) :-
 
 
 diagnosticar_diabetes(Nome, Sexo, Idade, Hiper, Card, Fumante, IMC, Hemoglobina, Glicose, Sedentario, HistDiabetes, SedeFrequente, StatusDiabetes) :-
-    (Hiper == sim -> Counter1 is 2; Counter1 is 0),
-    (Card == sim -> Counter2 is Counter1 + 1; Counter2 is Counter1),
-    (Fumante == sim -> Counter3 is Counter2 + 2; (Fumante == passado -> Counter3 is Counter2 + 1; Counter3 is Counter2)),
+    pontos_iniciais(Sedentario, HistDiabetes, SedeFrequente, PontosIniciais),
 
-    (IMC > 24.9, IMC < 29.9 -> Counter4 is Counter3 + 1; (IMC >= 30 -> Counter4 is Counter3 + 2; Counter4 is Counter3)),
-
+    (Hiper == sim -> Pontos1 is 2; Pontos1 is 0),
+    (Card == sim -> Pontos2 is 1; Pontos2 is 0),
+    (Fumante == sim -> Pontos3 is 2; (Fumante == passado -> Pontos3 is 1; Pontos3 is 0)),
+    (IMC > 24.9, IMC < 29.9 -> Pontos4 is 1; (IMC >= 30 -> Pontos4 is 2; Pontos4 is 0)),
     intervalo_hemoglobina_status_sim_diabetes(MediaHemoglobinaSim, MinHemo),
     intervalo_glicose_status_sim_diabetes(MediaGlicoseSim, MinGlicose),
-    write('Media Hemoglobina Sim: '), write(MediaHemoglobinaSim), nl,
-    write('Min Hemoglobina Sim: '), write(MinHemo), nl,
-    write('Media Glicose Sim: '), write(MediaGlicoseSim), nl,
-    write('Min Glicose Sim: '), write(MinGlicose), nl,
+    (Hemoglobina > 8.9, Glicose > MinGlicose -> Pontos5 is 11; Pontos5 is 0),
+    (Glicose > MinGlicose -> Pontos6 is 2; Pontos6 is 0),
+    (Hemoglobina > MinHemo -> Pontos7 is 2; Pontos7 is 0),
 
-    (Hemoglobina > 8.9, Glicose > MinGlicose -> Counter5 is Counter4 + 11; Counter5 is Counter4),
+    TotalPontos is PontosIniciais + Pontos1 + Pontos2 + Pontos3 + Pontos4 + Pontos5 + Pontos6 + Pontos7,
 
-    (Glicose > MinGlicose -> Counter6 is Counter5 + 2; Counter6 is Counter5),
-    (Hemoglobina > MinHemo -> Counter7 is Counter6 + 2; Counter7 is Counter6),
+    (TotalPontos >= 11 -> StatusDiabetes = sim; StatusDiabetes = nao).
 
-    (Counter7 >= 5 -> StatusDiabetes = sim; StatusDiabetes = nao).
+pontos_iniciais(sim, sim, sim, 6). 
+pontos_iniciais(_, sim, sim, 5).  
+pontos_iniciais(sim, _, sim, 4).   
+pontos_iniciais(sim, sim, _, 5). 
+pontos_iniciais(sim, _, _, 1).   
+pontos_iniciais(_, sim, _, 2).   
+pontos_iniciais(_, _, sim, 3).    
+pontos_iniciais(_, _, _, 0).     
+    
 
 calcular_imc(Altura, Peso, IMC) :-
     write('Digite a altura do paciente: (em metros) '), nl,
